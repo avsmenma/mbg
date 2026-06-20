@@ -1,0 +1,17 @@
+'use server'
+
+import { revalidatePath } from 'next/cache'
+import { createClient } from '@/lib/supabase/server'
+
+export async function setPaymentStatus(
+  saleId: string,
+  status: 'cair' | 'belum'
+): Promise<void> {
+  const supabase = await createClient()
+  const { error } = await supabase
+    .from('sales')
+    .update({ status_bayar: status })
+    .eq('id', saleId)
+  if (error) throw new Error(error.message)
+  revalidatePath('/pembayaran')
+}
