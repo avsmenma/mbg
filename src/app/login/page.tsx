@@ -29,23 +29,32 @@ export default function Login() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
+    <div
+      className="min-h-screen flex items-center justify-center"
+      style={{ backgroundColor: 'var(--paper)' }}
+    >
       <form
         onSubmit={submit}
-        className="max-w-sm w-full mx-auto space-y-4 p-8 bg-white rounded-xl shadow-md"
+        className="max-w-sm w-full mx-auto space-y-4 p-8 rounded-xl shadow-md"
+        style={{ backgroundColor: 'var(--paper-elev)', border: '1px solid var(--line)' }}
       >
         <div className="text-center mb-2">
-          <h1 className="text-2xl font-bold text-gray-900">Masuk</h1>
-          <p className="text-sm text-gray-500 mt-1">Sistem Manajemen MBG</p>
+          <h1
+            className="text-2xl font-bold"
+            style={{ fontFamily: 'var(--font-display), system-ui, sans-serif', color: 'var(--ink)' }}
+          >
+            Masuk
+          </h1>
+          <p className="text-sm mt-1" style={{ color: 'var(--moss)' }}>Sistem Manajemen MBG</p>
         </div>
 
         <div className="space-y-1">
-          <label className="block text-sm font-medium text-gray-700">
+          <label className="block text-sm font-medium" style={{ color: 'var(--ink)' }}>
             Email
           </label>
           <input
             type="email"
-            className="border border-gray-300 w-full p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-800"
+            className="border border-gray-300 w-full p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#C77D12]"
             placeholder="nama@contoh.com"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
@@ -54,12 +63,12 @@ export default function Login() {
         </div>
 
         <div className="space-y-1">
-          <label className="block text-sm font-medium text-gray-700">
+          <label className="block text-sm font-medium" style={{ color: 'var(--ink)' }}>
             Kata sandi
           </label>
           <input
             type="password"
-            className="border border-gray-300 w-full p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-800"
+            className="border border-gray-300 w-full p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#C77D12]"
             placeholder="••••••••"
             value={pw}
             onChange={(e) => setPw(e.target.value)}
@@ -68,13 +77,18 @@ export default function Login() {
         </div>
 
         {err && (
-          <p className="text-red-600 text-sm bg-red-50 p-2 rounded">{err}</p>
+          <p
+            className="text-sm p-2 rounded"
+            style={{ backgroundColor: '#F5D5CF', color: 'var(--clay)' }}
+          >
+            {err}
+          </p>
         )}
 
         <button
           type="submit"
           disabled={loading}
-          className="bg-green-800 hover:bg-green-900 disabled:opacity-60 text-white w-full p-2 rounded-lg font-medium transition-colors"
+          className="btn-primary w-full justify-center py-2.5 disabled:opacity-60"
         >
           {loading ? 'Memuat...' : 'Masuk'}
         </button>

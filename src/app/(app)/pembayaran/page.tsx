@@ -43,26 +43,29 @@ export default async function PembayaranPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-xl font-semibold text-gray-800">Status Pembayaran</h2>
+        <h2
+          className="text-xl font-semibold"
+          style={{ fontFamily: 'var(--font-display), system-ui, sans-serif', color: 'var(--ink)' }}
+        >
+          Status Pembayaran
+        </h2>
       </div>
 
       {/* KPI Strip */}
-      <div className="bg-amber-50 border border-amber-200 rounded-lg px-6 py-4 flex items-center gap-4">
-        <div>
-          <p className="text-xs text-amber-600 font-medium uppercase tracking-wide">Total Piutang</p>
-          <p className="text-2xl font-bold text-amber-700">{rupiah(totalPiutang)}</p>
-          <p className="text-xs text-amber-500 mt-0.5">
-            {invoices.filter((inv) => inv.status_bayar === 'belum').length} invoice belum cair
-          </p>
-        </div>
+      <div className="card px-6 py-4">
+        <p className="card-title mb-1">Total Piutang</p>
+        <p className="money text-2xl font-bold" style={{ color: 'var(--amber)' }}>{rupiah(totalPiutang)}</p>
+        <p className="text-xs mt-0.5" style={{ color: 'var(--moss)' }}>
+          {invoices.filter((inv) => inv.status_bayar === 'belum').length} invoice belum cair
+        </p>
       </div>
 
       {/* Table */}
-      <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+      <div className="card overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="bg-[#0f4c3a] text-white">
+              <tr className="table-header-row">
                 <th className="px-4 py-3 text-left font-semibold w-8">#</th>
                 <th className="px-4 py-3 text-left font-semibold">No. Invoice</th>
                 <th className="px-4 py-3 text-left font-semibold">Pelanggan</th>
@@ -75,29 +78,32 @@ export default async function PembayaranPage() {
             <tbody>
               {invoices.length === 0 && (
                 <tr>
-                  <td colSpan={7} className="px-4 py-8 text-center text-gray-400">
+                  <td colSpan={7} className="px-4 py-8 text-center" style={{ color: 'var(--moss)' }}>
                     Belum ada invoice.
                   </td>
                 </tr>
               )}
               {invoices.map((inv, i) => (
-                <tr key={inv.id} className="border-t border-gray-100 hover:bg-gray-50">
-                  <td className="px-4 py-2 text-gray-400">{i + 1}</td>
-                  <td className="px-4 py-2 font-medium text-gray-800">{inv.no_invoice ?? '—'}</td>
-                  <td className="px-4 py-2 text-gray-600">{inv.customer_nama ?? '—'}</td>
-                  <td className="px-4 py-2 text-gray-600">{tanggalID(inv.tanggal_antar)}</td>
-                  <td className="px-4 py-2 text-right font-semibold text-gray-800">
+                <tr
+                  key={inv.id}
+                  className="border-t hover:bg-[#EEF5F0] transition-colors"
+                  style={{
+                    borderColor: 'var(--line)',
+                    backgroundColor: i % 2 === 1 ? 'var(--canvas)' : 'var(--paper-elev)',
+                  }}
+                >
+                  <td className="px-4 py-2 text-[#9a9a9a]">{i + 1}</td>
+                  <td className="px-4 py-2 font-medium" style={{ color: 'var(--ink)' }}>{inv.no_invoice ?? '—'}</td>
+                  <td className="px-4 py-2 text-[#5a5a5a]">{inv.customer_nama ?? '—'}</td>
+                  <td className="px-4 py-2 text-[#5a5a5a]">{tanggalID(inv.tanggal_antar)}</td>
+                  <td className="px-4 py-2 text-right money">
                     {rupiah(inv.total_jual)}
                   </td>
                   <td className="px-4 py-2 text-center">
                     {inv.status_bayar === 'cair' ? (
-                      <span className="inline-block bg-emerald-100 text-emerald-700 text-xs font-semibold px-2.5 py-0.5 rounded-full">
-                        Cair
-                      </span>
+                      <span className="badge-cair">Cair</span>
                     ) : (
-                      <span className="inline-block bg-amber-100 text-amber-700 text-xs font-semibold px-2.5 py-0.5 rounded-full">
-                        Belum
-                      </span>
+                      <span className="badge-belum">Belum</span>
                     )}
                   </td>
                   <td className="px-4 py-2">
@@ -106,7 +112,8 @@ export default async function PembayaranPage() {
                         <form action={setPaymentStatus.bind(null, inv.id, 'cair')}>
                           <button
                             type="submit"
-                            className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs px-3 py-1 rounded transition-colors"
+                            className="text-white text-xs px-3 py-1 rounded transition-colors"
+                            style={{ backgroundColor: 'var(--pine-700)' }}
                           >
                             Cair
                           </button>
@@ -130,7 +137,7 @@ export default async function PembayaranPage() {
           </table>
         </div>
         {invoices.length > 0 && (
-          <div className="px-4 py-2 border-t border-gray-100 text-xs text-gray-400">
+          <div className="px-4 py-2 border-t text-xs" style={{ borderColor: 'var(--line)', color: 'var(--moss)' }}>
             {invoices.length} invoice
           </div>
         )}
