@@ -25,11 +25,15 @@ export async function proxy(req: NextRequest) {
   const isLogin = req.nextUrl.pathname.startsWith('/login')
 
   if (!user && !isLogin) {
-    return NextResponse.redirect(new URL('/login', req.url))
+    const redirect = NextResponse.redirect(new URL('/login', req.url))
+    res.cookies.getAll().forEach((c) => redirect.cookies.set(c))
+    return redirect
   }
 
   if (user && isLogin) {
-    return NextResponse.redirect(new URL('/dashboard', req.url))
+    const redirect = NextResponse.redirect(new URL('/dashboard', req.url))
+    res.cookies.getAll().forEach((c) => redirect.cookies.set(c))
+    return redirect
   }
 
   return res
