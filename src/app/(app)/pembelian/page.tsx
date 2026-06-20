@@ -3,6 +3,7 @@ import { listPurchases } from '@/lib/db/purchases'
 import { rupiah } from '@/lib/format'
 import { tanggalID } from '@/lib/format'
 import { deletePurchaseAction } from './actions'
+import { DeleteButton } from '@/components/DeleteButton'
 
 export default async function PembelianPage() {
   const purchases = await listPurchases()
@@ -10,20 +11,20 @@ export default async function PembelianPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-xl font-semibold text-gray-800">Daftar Faktur Belanja</h2>
+        <h2 className="text-xl font-semibold text-[#1a1a1a]">Daftar Faktur Belanja</h2>
         <Link
           href="/pembelian/baru"
-          className="bg-[#0f4c3a] hover:bg-[#0d3f31] text-white text-sm font-medium px-4 py-2 rounded transition-colors"
+          className="btn-primary"
         >
           + Tambah Faktur
         </Link>
       </div>
 
-      <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+      <div className="card overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
-            <thead>
-              <tr className="bg-[#0f4c3a] text-white">
+            <thead className="sticky top-0 z-10">
+              <tr className="table-header-row">
                 <th className="px-4 py-3 text-left font-semibold w-8">#</th>
                 <th className="px-4 py-3 text-left font-semibold">Tanggal</th>
                 <th className="px-4 py-3 text-left font-semibold">Catatan</th>
@@ -35,18 +36,27 @@ export default async function PembelianPage() {
             <tbody>
               {purchases.length === 0 && (
                 <tr>
-                  <td colSpan={6} className="px-4 py-8 text-center text-gray-400">
-                    Belum ada faktur belanja.
+                  <td colSpan={6}>
+                    <div className="flex flex-col items-center justify-center py-16 gap-2">
+                      <span className="text-4xl">🛒</span>
+                      <p className="text-[#5a5a5a] font-medium">Belum ada faktur belanja</p>
+                      <p className="text-sm text-[#9a9a9a]">Klik &quot;+ Tambah Faktur&quot; untuk mencatat pembelian baru.</p>
+                    </div>
                   </td>
                 </tr>
               )}
               {purchases.map((p, i) => (
-                <tr key={p.id} className="border-t border-gray-100 hover:bg-gray-50">
-                  <td className="px-4 py-2 text-gray-400">{i + 1}</td>
-                  <td className="px-4 py-2 font-medium text-gray-800">{tanggalID(p.tanggal)}</td>
-                  <td className="px-4 py-2 text-gray-500">{p.catatan ?? '—'}</td>
-                  <td className="px-4 py-2 text-center text-gray-700">{p.item_count}</td>
-                  <td className="px-4 py-2 text-right font-semibold text-gray-800">
+                <tr
+                  key={p.id}
+                  className={`border-t border-[#e2e0da] hover:bg-[#e6f0ec]/30 transition-colors ${
+                    i % 2 === 1 ? 'bg-[#f7f6f3]' : 'bg-white'
+                  }`}
+                >
+                  <td className="px-4 py-2 text-[#9a9a9a]">{i + 1}</td>
+                  <td className="px-4 py-2 font-medium text-[#1a1a1a]">{tanggalID(p.tanggal)}</td>
+                  <td className="px-4 py-2 text-[#5a5a5a]">{p.catatan ?? '—'}</td>
+                  <td className="px-4 py-2 text-center text-[#5a5a5a]">{p.item_count}</td>
+                  <td className="px-4 py-2 text-right font-semibold text-[#1a1a1a] tabular-nums">
                     {rupiah(p.total_net)}
                   </td>
                   <td className="px-4 py-2">
@@ -58,12 +68,7 @@ export default async function PembelianPage() {
                         Edit
                       </Link>
                       <form action={deletePurchaseAction.bind(null, p.id)}>
-                        <button
-                          type="submit"
-                          className="bg-red-600 hover:bg-red-700 text-white text-xs px-3 py-1 rounded transition-colors"
-                        >
-                          Hapus
-                        </button>
+                        <DeleteButton className="bg-red-600 hover:bg-red-700 text-white text-xs px-3 py-1 rounded transition-colors" />
                       </form>
                     </div>
                   </td>
@@ -73,7 +78,7 @@ export default async function PembelianPage() {
           </table>
         </div>
         {purchases.length > 0 && (
-          <div className="px-4 py-2 border-t border-gray-100 text-xs text-gray-400">
+          <div className="px-4 py-2 border-t border-[#e2e0da] text-xs text-[#9a9a9a]">
             {purchases.length} faktur
           </div>
         )}

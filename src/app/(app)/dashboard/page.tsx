@@ -10,16 +10,18 @@ function KpiCard({
   label,
   value,
   negative,
+  dot,
 }: {
   label: string
   value: number
   negative?: boolean
+  dot?: string
 }) {
   return (
-    <div className="bg-white rounded-lg border border-gray-200 shadow-sm px-5 py-4">
-      <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">{label}</p>
+    <div className="card px-5 py-5 border-l-4" style={{ borderLeftColor: dot ?? 'var(--brand)' }}>
+      <p className="text-xs font-medium text-[#5a5a5a] uppercase tracking-wide mb-2">{label}</p>
       <p
-        className={`text-xl font-bold ${
+        className={`text-2xl font-bold tabular-nums ${
           negative ? 'text-red-600' : 'text-[#0f4c3a]'
         }`}
       >
@@ -47,7 +49,7 @@ export default async function DashboardPage() {
   return (
     <div className="space-y-6">
       {/* Heading */}
-      <h2 className="text-xl font-semibold text-gray-800">Dashboard</h2>
+      <h2 className="text-xl font-semibold text-[#1a1a1a]">Dashboard</h2>
 
       {/* Perlu-cek notice */}
       {perluCekCount > 0 && (
@@ -68,43 +70,52 @@ export default async function DashboardPage() {
 
       {/* KPI Cards */}
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-        <KpiCard label="Total Jual" value={totalJual} />
-        <KpiCard label="Total Modal" value={totalModal} />
+        <KpiCard label="Total Jual" value={totalJual} dot="#2d8c6f" />
+        <KpiCard label="Total Modal" value={totalModal} dot="#5a5a5a" />
         <KpiCard
           label="Total Profit"
           value={totalProfit}
           negative={totalProfit < 0}
+          dot={totalProfit < 0 ? '#dc2626' : '#0f4c3a'}
         />
-        <KpiCard label="Piutang (Belum Cair)" value={piutang} />
+        <KpiCard label="Piutang (Belum Cair)" value={piutang} dot="#d97706" />
       </div>
 
       {/* Profit chart */}
-      <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-5">
-        <h3 className="text-sm font-semibold text-gray-700 mb-4">Profit per Tanggal Antar</h3>
+      <div className="card p-5">
+        <h3 className="text-sm font-semibold text-[#5a5a5a] mb-4">Profit per Tanggal Antar</h3>
         <ProfitChart data={perTanggal} />
       </div>
 
       {/* Transaksi Terbaru */}
-      <div className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
-        <div className="px-5 py-4 border-b border-gray-100">
-          <h3 className="text-sm font-semibold text-gray-700">Transaksi Terbaru</h3>
+      <div className="card overflow-hidden">
+        <div className="px-5 py-4 border-b border-[#e2e0da]">
+          <h3 className="text-sm font-semibold text-[#5a5a5a]">Transaksi Terbaru</h3>
         </div>
         {recentSales.length === 0 ? (
-          <p className="px-5 py-6 text-sm text-gray-400">Belum ada transaksi.</p>
+          <div className="px-5 py-12 text-center">
+            <p className="text-2xl mb-2">📋</p>
+            <p className="text-sm text-[#9a9a9a]">Belum ada transaksi.</p>
+          </div>
         ) : (
           <table className="w-full text-sm">
-            <thead className="bg-gray-50 text-xs text-gray-500 uppercase">
+            <thead className="table-header-row sticky top-0 z-10 text-xs uppercase">
               <tr>
-                <th className="px-5 py-3 text-left font-medium">No. Invoice</th>
-                <th className="px-5 py-3 text-left font-medium">Tanggal</th>
-                <th className="px-5 py-3 text-right font-medium">Total Jual</th>
-                <th className="px-5 py-3 text-center font-medium">Status</th>
+                <th className="px-5 py-3 text-left font-semibold">No. Invoice</th>
+                <th className="px-5 py-3 text-left font-semibold">Tanggal</th>
+                <th className="px-5 py-3 text-right font-semibold">Total Jual</th>
+                <th className="px-5 py-3 text-center font-semibold">Status</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-100">
-              {recentSales.map((sale) => (
-                <tr key={sale.id} className="hover:bg-gray-50 transition-colors">
-                  <td className="px-5 py-3 text-gray-800 font-medium">
+            <tbody className="divide-y divide-[#e2e0da]">
+              {recentSales.map((sale, idx) => (
+                <tr
+                  key={sale.id}
+                  className={`hover:bg-[#e6f0ec]/40 transition-colors ${
+                    idx % 2 === 1 ? 'bg-[#f7f6f3]' : 'bg-white'
+                  }`}
+                >
+                  <td className="px-5 py-3 text-[#1a1a1a] font-medium">
                     <Link
                       href={`/penjualan/${sale.id}`}
                       className="hover:underline text-[#0f4c3a]"
@@ -112,8 +123,8 @@ export default async function DashboardPage() {
                       {sale.no_invoice ?? '—'}
                     </Link>
                   </td>
-                  <td className="px-5 py-3 text-gray-600">{sale.tanggal_antar}</td>
-                  <td className="px-5 py-3 text-right text-gray-800">
+                  <td className="px-5 py-3 text-[#5a5a5a]">{sale.tanggal_antar}</td>
+                  <td className="px-5 py-3 text-right text-[#1a1a1a] tabular-nums">
                     {rupiah(sale.total_jual)}
                   </td>
                   <td className="px-5 py-3 text-center">

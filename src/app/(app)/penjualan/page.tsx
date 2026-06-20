@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { listSales } from '@/lib/db/sales'
 import { rupiah, tanggalID } from '@/lib/format'
 import { deleteSaleAction } from './actions'
+import { DeleteButton } from '@/components/DeleteButton'
 
 export default async function PenjualanPage() {
   const sales = await listSales()
@@ -9,20 +10,28 @@ export default async function PenjualanPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-xl font-semibold text-gray-800">Daftar Invoice Penjualan</h2>
-        <Link
-          href="/penjualan/baru"
-          className="bg-[#0f4c3a] hover:bg-[#0d3f31] text-white text-sm font-medium px-4 py-2 rounded transition-colors"
-        >
-          + Tambah Invoice
-        </Link>
+        <h2 className="text-xl font-semibold text-[#1a1a1a]">Daftar Invoice Penjualan</h2>
+        <div className="flex items-center gap-2">
+          <a
+            href="/penjualan/export"
+            className="bg-white border border-[#e2e0da] hover:bg-[#f7f6f3] text-[#1a1a1a] text-sm font-medium px-4 py-2 rounded-lg transition-colors shadow-sm inline-flex items-center gap-1.5"
+          >
+            ⬇ Export Excel
+          </a>
+          <Link
+            href="/penjualan/baru"
+            className="btn-primary"
+          >
+            + Tambah Invoice
+          </Link>
+        </div>
       </div>
 
-      <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+      <div className="card overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
-            <thead>
-              <tr className="bg-[#0f4c3a] text-white">
+            <thead className="sticky top-0 z-10">
+              <tr className="table-header-row">
                 <th className="px-4 py-3 text-left font-semibold w-8">#</th>
                 <th className="px-4 py-3 text-left font-semibold">No. Invoice</th>
                 <th className="px-4 py-3 text-left font-semibold">Pelanggan</th>
@@ -36,25 +45,34 @@ export default async function PenjualanPage() {
             <tbody>
               {sales.length === 0 && (
                 <tr>
-                  <td colSpan={8} className="px-4 py-8 text-center text-gray-400">
-                    Belum ada invoice penjualan.
+                  <td colSpan={8}>
+                    <div className="flex flex-col items-center justify-center py-16 gap-2">
+                      <span className="text-4xl">📋</span>
+                      <p className="text-[#5a5a5a] font-medium">Belum ada invoice penjualan</p>
+                      <p className="text-sm text-[#9a9a9a]">Klik &quot;+ Tambah Invoice&quot; untuk mulai mencatat transaksi.</p>
+                    </div>
                   </td>
                 </tr>
               )}
               {sales.map((s, i) => (
-                <tr key={s.id} className="border-t border-gray-100 hover:bg-gray-50">
-                  <td className="px-4 py-2 text-gray-400">{i + 1}</td>
-                  <td className="px-4 py-2 font-medium text-gray-800">
+                <tr
+                  key={s.id}
+                  className={`border-t border-[#e2e0da] hover:bg-[#e6f0ec]/30 transition-colors ${
+                    i % 2 === 1 ? 'bg-[#f7f6f3]' : 'bg-white'
+                  }`}
+                >
+                  <td className="px-4 py-2 text-[#9a9a9a]">{i + 1}</td>
+                  <td className="px-4 py-2 font-medium text-[#1a1a1a]">
                     <Link href={`/penjualan/${s.id}`} className="hover:text-[#0f4c3a] hover:underline">
                       {s.no_invoice ?? '—'}
                     </Link>
                   </td>
-                  <td className="px-4 py-2 text-gray-600">{s.customer_nama ?? '—'}</td>
-                  <td className="px-4 py-2 text-gray-600">{tanggalID(s.tanggal_antar)}</td>
-                  <td className="px-4 py-2 text-right font-semibold text-gray-800">
+                  <td className="px-4 py-2 text-[#5a5a5a]">{s.customer_nama ?? '—'}</td>
+                  <td className="px-4 py-2 text-[#5a5a5a]">{tanggalID(s.tanggal_antar)}</td>
+                  <td className="px-4 py-2 text-right font-semibold text-[#1a1a1a] tabular-nums">
                     {rupiah(s.total_jual)}
                   </td>
-                  <td className="px-4 py-2 text-right font-semibold text-emerald-700">
+                  <td className="px-4 py-2 text-right font-semibold text-emerald-700 tabular-nums">
                     {rupiah(s.total_fee)}
                   </td>
                   <td className="px-4 py-2 text-center">
@@ -77,12 +95,7 @@ export default async function PenjualanPage() {
                         Edit
                       </Link>
                       <form action={deleteSaleAction.bind(null, s.id)}>
-                        <button
-                          type="submit"
-                          className="bg-red-600 hover:bg-red-700 text-white text-xs px-3 py-1 rounded transition-colors"
-                        >
-                          Hapus
-                        </button>
+                        <DeleteButton className="bg-red-600 hover:bg-red-700 text-white text-xs px-3 py-1 rounded transition-colors" />
                       </form>
                     </div>
                   </td>
@@ -92,7 +105,7 @@ export default async function PenjualanPage() {
           </table>
         </div>
         {sales.length > 0 && (
-          <div className="px-4 py-2 border-t border-gray-100 text-xs text-gray-400">
+          <div className="px-4 py-2 border-t border-[#e2e0da] text-xs text-[#9a9a9a]">
             {sales.length} invoice
           </div>
         )}
