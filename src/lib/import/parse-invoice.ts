@@ -15,6 +15,12 @@ export interface InvoiceRow {
   satuan: string
   hargaModal: number
   hargaJual: number
+  /** Jumlah Harga Jual tercatat di Excel (col[7]) */
+  jumlahJual: number
+  /** Jumlah Harga Suplier tercatat di Excel (col[8]) */
+  jumlahModal: number
+  /** Profit tercatat di Excel (col[9]) */
+  profitRecorded: number
   statusBayar: 'cair' | 'belum'
   tanggal: string | null
 }
@@ -73,6 +79,9 @@ export function parseInvoiceRecap(path: string): InvoiceRow[] {
       satuan: String(r[4] ?? '').trim(),
       hargaModal,
       hargaJual,
+      jumlahJual: num(r[7]),
+      jumlahModal: num(r[8]),
+      profitRecorded: num(r[9]),
       statusBayar: /belum/i.test(ket) ? 'belum' : 'cair',
       tanggal: tanggalAktif,
     })
