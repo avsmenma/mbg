@@ -97,7 +97,10 @@ export async function getPurchase(id: string): Promise<PurchaseDetail | null> {
     .select('id, tanggal, catatan, total_net, created_at')
     .eq('id', id)
     .single()
-  if (hErr) return null
+  if (hErr) {
+    if (hErr.code === 'PGRST116') return null // tidak ada baris = not found
+    throw hErr
+  }
 
   const { data: items, error: iErr } = await supabase
     .from('purchase_items')
