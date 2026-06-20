@@ -2,17 +2,33 @@ import { Sidebar } from '@/components/Sidebar'
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex min-h-screen bg-[#f7f6f3]">
-      {/* Sidebar (handles its own mobile toggling internally) */}
+    <div className="flex min-h-screen" style={{ backgroundColor: 'var(--paper)' }}>
       <Sidebar />
 
-      {/* Main content area */}
       <div className="flex flex-col flex-1 min-w-0">
-        {/* Desktop header — hidden on mobile (Sidebar top-bar handles mobile) */}
-        <header className="hidden lg:flex h-14 items-center px-6 border-b border-[#e2e0da] bg-white shrink-0 shadow-sm">
-          <h1 className="text-base font-semibold text-[#1a1a1a]">
-            MBG Supply — Sistem Manajemen Penjualan
-          </h1>
+        {/* Desktop header */}
+        <header
+          className="hidden lg:flex h-14 items-center px-6 shrink-0"
+          style={{
+            borderBottom: '1px solid var(--line)',
+            backgroundColor: 'var(--paper-elev)',
+            boxShadow: '0 1px 3px 0 rgb(0 0 0 / 0.04)',
+          }}
+        >
+          <div className="flex flex-col justify-center">
+            <p
+              className="text-[10px] uppercase tracking-widest font-medium"
+              style={{ color: 'var(--moss)', fontFamily: 'var(--font-body), system-ui, sans-serif' }}
+            >
+              Sistem Manajemen Penjualan
+            </p>
+            <h1
+              className="text-sm font-semibold leading-tight"
+              style={{ color: 'var(--ink)', fontFamily: 'var(--font-display), system-ui, sans-serif' }}
+            >
+              MBG Supply
+            </h1>
+          </div>
         </header>
 
         {/* Page content */}

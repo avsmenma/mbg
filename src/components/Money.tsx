@@ -1,3 +1,5 @@
 import { rupiah } from '@/lib/format'
 
-export const Money = ({ value }: { value: number }) => <span>{rupiah(value)}</span>
+export const Money = ({ value, className }: { value: number; className?: string }) => (
+  <span className={`money${className ? ` ${className}` : ''}`}>{rupiah(value)}</span>
+)
