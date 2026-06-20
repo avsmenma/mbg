@@ -16,7 +16,7 @@ export async function savePurchaseAction(
     harga: number
     diskon_persen: number
   }[]
-): Promise<void> {
+): Promise<{ ok: true; id: string }> {
   const headerInput: PurchaseHeaderInput = {
     id: header.id,
     tanggal: header.tanggal,
@@ -32,9 +32,9 @@ export async function savePurchaseAction(
     diskon_persen: it.diskon_persen,
   }))
 
-  await savePurchase(headerInput, itemInputs)
+  const id = await savePurchase(headerInput, itemInputs)
   revalidatePath('/pembelian')
-  redirect('/pembelian')
+  return { ok: true, id }
 }
 
 export async function deletePurchaseAction(id: string): Promise<void> {
