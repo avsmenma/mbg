@@ -36,3 +36,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Internal scratch (subagent ledger/reports) — never publish
+.superpowers/
+
+# Source business data (contains customer info) — keep out of public repo
+*.xlsx
