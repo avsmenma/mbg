@@ -114,7 +114,10 @@ export async function getSale(id: string): Promise<SaleDetail | null> {
     )
     .eq('id', id)
     .single()
-  if (hErr) return null
+  if (hErr) {
+    if (hErr.code === 'PGRST116') return null // tidak ada baris = not found
+    throw hErr
+  }
 
   const { data: items, error: iErr } = await supabase
     .from('sale_items')
