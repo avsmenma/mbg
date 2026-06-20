@@ -34,9 +34,25 @@ function CustomTooltip({
   if (!active || !payload || payload.length === 0) return null
   const val = payload[0].value
   return (
-    <div className="bg-white border border-gray-200 rounded shadow px-3 py-2 text-sm">
-      <p className="font-medium text-gray-700 mb-1">{label}</p>
-      <p className={val < 0 ? 'text-red-600 font-semibold' : 'text-[#0f4c3a] font-semibold'}>
+    <div
+      style={{
+        backgroundColor: '#FFFFFF',
+        border: '1px solid #E6DFD1',
+        borderRadius: '0.5rem',
+        boxShadow: '0 2px 8px rgb(0 0 0 / 0.10)',
+        padding: '0.5rem 0.75rem',
+        fontFamily: 'var(--font-body), system-ui, sans-serif',
+      }}
+    >
+      <p style={{ fontSize: '0.75rem', color: '#4C7A5A', marginBottom: '0.25rem' }}>{label}</p>
+      <p
+        className="money"
+        style={{
+          fontSize: '0.875rem',
+          fontWeight: 600,
+          color: val < 0 ? '#A83A2B' : '#16513D',
+        }}
+      >
         {rupiah(val)}
       </p>
     </div>
@@ -46,7 +62,10 @@ function CustomTooltip({
 export function ProfitChart({ data }: Props) {
   if (!data || data.length === 0) {
     return (
-      <div className="flex items-center justify-center h-48 text-gray-400 text-sm">
+      <div
+        className="flex items-center justify-center h-48 text-sm"
+        style={{ color: 'var(--moss)', fontFamily: 'var(--font-body), system-ui, sans-serif' }}
+      >
         Belum ada data transaksi.
       </div>
     )
@@ -57,14 +76,15 @@ export function ProfitChart({ data }: Props) {
   return (
     <ResponsiveContainer width="100%" height={240}>
       <BarChart data={data} margin={{ top: 8, right: 16, left: 16, bottom: 8 }}>
-        <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+        <CartesianGrid strokeDasharray="3 3" stroke="#E6DFD1" vertical={false} />
         <XAxis
           dataKey="tanggal"
-          tick={{ fontSize: 11, fill: '#6b7280' }}
+          tick={{ fontSize: 11, fill: '#4C7A5A', fontFamily: 'var(--font-mono), monospace' }}
           tickLine={false}
+          axisLine={{ stroke: '#E6DFD1' }}
         />
         <YAxis
-          tick={{ fontSize: 11, fill: '#6b7280' }}
+          tick={{ fontSize: 11, fill: '#4C7A5A', fontFamily: 'var(--font-mono), monospace' }}
           tickLine={false}
           axisLine={false}
           tickFormatter={(v: number) => {
@@ -73,13 +93,13 @@ export function ProfitChart({ data }: Props) {
             return String(v)
           }}
         />
-        {hasNegative && <ReferenceLine y={0} stroke="#9ca3af" strokeWidth={1} />}
-        <Tooltip content={<CustomTooltip />} />
-        <Bar dataKey="profit" radius={[3, 3, 0, 0]}>
+        {hasNegative && <ReferenceLine y={0} stroke="#E6DFD1" strokeWidth={1.5} />}
+        <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(14, 59, 46, 0.04)' }} />
+        <Bar dataKey="profit" radius={[3, 3, 0, 0]} maxBarSize={40}>
           {data.map((entry, index) => (
             <Cell
               key={`cell-${index}`}
-              fill={entry.profit < 0 ? '#ef4444' : '#0f4c3a'}
+              fill={entry.profit < 0 ? '#A83A2B' : '#16513D'}
             />
           ))}
         </Bar>

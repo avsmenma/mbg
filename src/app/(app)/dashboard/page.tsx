@@ -4,29 +4,94 @@ import { Money } from '@/components/Money'
 import { ProfitChart } from '@/components/ProfitChart'
 import { rupiah } from '@/lib/format'
 
-// ── KPI Card ───────────────────────────────────────────────────────────────
+// ── Balance Ribbon ─────────────────────────────────────────────────────────
 
-function KpiCard({
-  label,
-  value,
-  negative,
-  dot,
+function BalanceRibbon({
+  totalJual,
+  totalModal,
+  totalProfit,
+  piutang,
 }: {
-  label: string
-  value: number
-  negative?: boolean
-  dot?: string
+  totalJual: number
+  totalModal: number
+  totalProfit: number
+  piutang: number
 }) {
+  const profitPositive = totalProfit >= 0
+
   return (
-    <div className="card px-5 py-5 border-l-4" style={{ borderLeftColor: dot ?? 'var(--brand)' }}>
-      <p className="text-xs font-medium text-[#5a5a5a] uppercase tracking-wide mb-2">{label}</p>
-      <p
-        className={`text-2xl font-bold tabular-nums ${
-          negative ? 'text-red-600' : 'text-[#0f4c3a]'
-        }`}
-      >
-        <Money value={value} />
-      </p>
+    <div
+      className="card grid grid-cols-2 lg:grid-cols-4"
+      role="region"
+      aria-label="Ringkasan keuangan"
+    >
+      {/* Total Jual */}
+      <div className="px-5 py-5 flex flex-col gap-1.5 border-r border-b lg:border-b-0"
+           style={{ borderColor: 'var(--line)' }}>
+        <p
+          className="text-[10px] font-semibold uppercase tracking-widest"
+          style={{ color: 'var(--moss)', fontFamily: 'var(--font-display), system-ui, sans-serif' }}
+        >
+          Total Jual
+        </p>
+        <p
+          className="text-xl font-semibold money"
+          style={{ color: 'var(--ink)' }}
+        >
+          {rupiah(totalJual)}
+        </p>
+      </div>
+
+      {/* Total Modal */}
+      <div className="px-5 py-5 flex flex-col gap-1.5 border-b lg:border-b-0 lg:border-r"
+           style={{ borderColor: 'var(--line)' }}>
+        <p
+          className="text-[10px] font-semibold uppercase tracking-widest"
+          style={{ color: 'var(--moss)', fontFamily: 'var(--font-display), system-ui, sans-serif' }}
+        >
+          Total Modal
+        </p>
+        <p
+          className="text-xl font-semibold money"
+          style={{ color: 'var(--ink)' }}
+        >
+          {rupiah(totalModal)}
+        </p>
+      </div>
+
+      {/* Total Profit — emphasized */}
+      <div className="px-5 py-5 flex flex-col gap-1.5 border-r"
+           style={{ borderColor: 'var(--line)' }}>
+        <p
+          className="text-[10px] font-semibold uppercase tracking-widest"
+          style={{ color: 'var(--moss)', fontFamily: 'var(--font-display), system-ui, sans-serif' }}
+        >
+          Total Profit
+        </p>
+        <p
+          className="text-2xl font-semibold money"
+          style={{ color: profitPositive ? 'var(--pine-700)' : 'var(--clay)' }}
+        >
+          {rupiah(totalProfit)}
+        </p>
+      </div>
+
+      {/* Piutang */}
+      <div className="px-5 py-5 flex flex-col gap-1.5">
+        <p
+          className="text-[10px] font-semibold uppercase tracking-widest"
+          style={{ color: 'var(--moss)', fontFamily: 'var(--font-display), system-ui, sans-serif' }}
+        >
+          Piutang
+        </p>
+        <p
+          className="text-xl font-semibold money"
+          style={{ color: 'var(--amber)' }}
+        >
+          {rupiah(piutang)}
+        </p>
+        <p className="text-[10px]" style={{ color: 'var(--moss)' }}>belum cair</p>
+      </div>
     </div>
   )
 }
@@ -47,101 +112,119 @@ export default async function DashboardPage() {
   } = data
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
       {/* Heading */}
-      <h2 className="text-xl font-semibold text-[#1a1a1a]">Dashboard</h2>
+      <h2
+        className="text-xl font-semibold"
+        style={{ color: 'var(--ink)', fontFamily: 'var(--font-display), system-ui, sans-serif' }}
+      >
+        Dashboard
+      </h2>
 
-      {/* Perlu-cek notice */}
+      {/* Perlu-cek ledger annotation */}
       {perluCekCount > 0 && (
-        <div className="flex items-center gap-3 bg-amber-50 border border-amber-300 rounded-lg px-4 py-3">
-          <span className="text-amber-600 font-bold text-lg">⚠️</span>
-          <p className="text-sm text-amber-800">
-            <span className="font-semibold">{perluCekCount} baris perlu dicek</span>
-            {' — baris yang diimpor dari Excel dengan angka tidak konsisten.'}
-          </p>
+        <div
+          className="flex items-start gap-3 rounded-lg px-4 py-3"
+          style={{
+            backgroundColor: '#FEF9EE',
+            border: '1px solid #F5D99A',
+            borderLeftWidth: '3px',
+            borderLeftColor: 'var(--amber)',
+          }}
+        >
+          <div className="flex-1 min-w-0">
+            <p className="text-sm" style={{ color: 'var(--ink)' }}>
+              <span className="font-semibold" style={{ color: '#7A5200' }}>
+                {perluCekCount} baris perlu dicek
+              </span>
+              {' — data diimpor dengan angka tidak konsisten.'}
+            </p>
+          </div>
           <Link
             href="/penjualan"
-            className="ml-auto text-sm font-medium text-amber-700 underline underline-offset-2 hover:text-amber-900 shrink-0"
+            className="text-sm font-medium shrink-0 underline underline-offset-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C77D12] rounded"
+            style={{ color: 'var(--amber)' }}
           >
             Lihat Penjualan →
           </Link>
         </div>
       )}
 
-      {/* KPI Cards */}
-      <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-        <KpiCard label="Total Jual" value={totalJual} dot="#2d8c6f" />
-        <KpiCard label="Total Modal" value={totalModal} dot="#5a5a5a" />
-        <KpiCard
-          label="Total Profit"
-          value={totalProfit}
-          negative={totalProfit < 0}
-          dot={totalProfit < 0 ? '#dc2626' : '#0f4c3a'}
-        />
-        <KpiCard label="Piutang (Belum Cair)" value={piutang} dot="#d97706" />
-      </div>
+      {/* Balance Ribbon */}
+      <BalanceRibbon
+        totalJual={totalJual}
+        totalModal={totalModal}
+        totalProfit={totalProfit}
+        piutang={piutang}
+      />
 
       {/* Profit chart */}
       <div className="card p-5">
-        <h3 className="text-sm font-semibold text-[#5a5a5a] mb-4">Profit per Tanggal Antar</h3>
+        <p className="card-title mb-4">Profit per Tanggal Antar</p>
         <ProfitChart data={perTanggal} />
       </div>
 
       {/* Transaksi Terbaru */}
       <div className="card overflow-hidden">
-        <div className="px-5 py-4 border-b border-[#e2e0da]">
-          <h3 className="text-sm font-semibold text-[#5a5a5a]">Transaksi Terbaru</h3>
+        <div className="px-5 py-4" style={{ borderBottom: '1px solid var(--line)' }}>
+          <p className="card-title">Transaksi Terbaru</p>
         </div>
         {recentSales.length === 0 ? (
           <div className="px-5 py-12 text-center">
-            <p className="text-2xl mb-2">📋</p>
-            <p className="text-sm text-[#9a9a9a]">Belum ada transaksi.</p>
+            <p className="text-3xl mb-2" aria-hidden="true">—</p>
+            <p className="text-sm font-medium" style={{ color: 'var(--moss)' }}>Belum ada transaksi</p>
+            <p className="text-xs mt-1" style={{ color: 'var(--moss)', opacity: 0.7 }}>
+              Tambahkan invoice penjualan untuk mulai mencatat.
+            </p>
           </div>
         ) : (
-          <table className="w-full text-sm">
-            <thead className="table-header-row sticky top-0 z-10 text-xs uppercase">
-              <tr>
-                <th className="px-5 py-3 text-left font-semibold">No. Invoice</th>
-                <th className="px-5 py-3 text-left font-semibold">Tanggal</th>
-                <th className="px-5 py-3 text-right font-semibold">Total Jual</th>
-                <th className="px-5 py-3 text-center font-semibold">Status</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-[#e2e0da]">
-              {recentSales.map((sale, idx) => (
-                <tr
-                  key={sale.id}
-                  className={`hover:bg-[#e6f0ec]/40 transition-colors ${
-                    idx % 2 === 1 ? 'bg-[#f7f6f3]' : 'bg-white'
-                  }`}
-                >
-                  <td className="px-5 py-3 text-[#1a1a1a] font-medium">
-                    <Link
-                      href={`/penjualan/${sale.id}`}
-                      className="hover:underline text-[#0f4c3a]"
-                    >
-                      {sale.no_invoice ?? '—'}
-                    </Link>
-                  </td>
-                  <td className="px-5 py-3 text-[#5a5a5a]">{sale.tanggal_antar}</td>
-                  <td className="px-5 py-3 text-right text-[#1a1a1a] tabular-nums">
-                    {rupiah(sale.total_jual)}
-                  </td>
-                  <td className="px-5 py-3 text-center">
-                    <span
-                      className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
-                        sale.status_bayar === 'cair'
-                          ? 'bg-green-100 text-green-700'
-                          : 'bg-amber-100 text-amber-700'
-                      }`}
-                    >
-                      {sale.status_bayar === 'cair' ? 'Cair' : 'Belum Cair'}
-                    </span>
-                  </td>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead className="sticky top-0 z-10">
+                <tr className="table-header-row">
+                  <th className="px-5 py-3 text-left">No. Invoice</th>
+                  <th className="px-5 py-3 text-left">Tanggal</th>
+                  <th className="px-5 py-3 text-right">Total Jual</th>
+                  <th className="px-5 py-3 text-center">Status</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {recentSales.map((sale, idx) => (
+                  <tr
+                    key={sale.id}
+                    className="transition-colors hover:bg-[#EEF5F0]"
+                    style={{
+                      borderTop: '1px solid var(--line)',
+                      backgroundColor: idx % 2 === 1 ? 'var(--canvas)' : 'var(--paper-elev)',
+                    }}
+                  >
+                    <td className="px-5 py-3 font-medium" style={{ color: 'var(--ink)' }}>
+                      <Link
+                        href={`/penjualan/${sale.id}`}
+                        className="hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C77D12] rounded"
+                        style={{ color: 'var(--pine-700)' }}
+                      >
+                        {sale.no_invoice ?? '—'}
+                      </Link>
+                    </td>
+                    <td className="px-5 py-3" style={{ color: 'var(--moss)' }}>
+                      {sale.tanggal_antar}
+                    </td>
+                    <td className="px-5 py-3 text-right money font-semibold" style={{ color: 'var(--ink)' }}>
+                      {rupiah(sale.total_jual)}
+                    </td>
+                    <td className="px-5 py-3 text-center">
+                      {sale.status_bayar === 'cair' ? (
+                        <span className="badge-cair">Cair</span>
+                      ) : (
+                        <span className="badge-belum">Belum</span>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         )}
       </div>
     </div>
