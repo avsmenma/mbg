@@ -36,7 +36,7 @@ interface Props {
       harga: number
       diskon_persen: number
     }[]
-  ) => Promise<void>
+  ) => Promise<{ ok: true; id: string }>
 }
 
 let keySeq = 0
@@ -129,7 +129,7 @@ export default function PurchaseForm({ products, suppliers, initial, saveAction 
     setError(null)
     setSubmitting(true)
     try {
-      await saveAction(
+      const result = await saveAction(
         { id: initial?.id, tanggal, catatan },
         rows.map((row) => ({
           product_id: row.product_id || null,
@@ -141,8 +141,13 @@ export default function PurchaseForm({ products, suppliers, initial, saveAction 
           diskon_persen: Number(row.diskon_persen) || 0,
         }))
       )
-      router.push('/pembelian')
-      router.refresh()
+      if (result.ok) {
+        router.push('/pembelian')
+        router.refresh()
+      } else {
+        setError('Gagal menyimpan.')
+        setSubmitting(false)
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Gagal menyimpan.')
       setSubmitting(false)
