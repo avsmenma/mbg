@@ -20,11 +20,31 @@ import { parseInvoiceRecap } from '../src/lib/import/parse-invoice'
 
 // ── Validasi env ──────────────────────────────────────────────────────────────
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL
-const SUPABASE_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
-if (!SUPABASE_URL || !SUPABASE_KEY) {
+// Preferensi kunci: service-role (bypass RLS) > anon key (butuh RLS nonaktif)
+const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY
+const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+
+if (!SUPABASE_URL) {
+  console.error('ERROR: NEXT_PUBLIC_SUPABASE_URL harus ada di .env.local')
+  process.exit(1)
+}
+
+let SUPABASE_KEY: string
+if (SUPABASE_SERVICE_KEY) {
+  SUPABASE_KEY = SUPABASE_SERVICE_KEY
+  console.log('INFO: Menggunakan SUPABASE_SERVICE_ROLE_KEY (bypass RLS).')
+} else if (SUPABASE_ANON_KEY) {
+  SUPABASE_KEY = SUPABASE_ANON_KEY
+  console.warn(
+    'PERINGATAN: SUPABASE_SERVICE_ROLE_KEY tidak ditemukan — menggunakan NEXT_PUBLIC_SUPABASE_ANON_KEY.\n' +
+    '  Setelah RLS diaktifkan (migrasi 0003), impor dengan anon key akan GAGAL.\n' +
+    '  Tambahkan SUPABASE_SERVICE_ROLE_KEY ke .env.local untuk impor ulang.'
+  )
+} else {
   console.error(
-    'ERROR: NEXT_PUBLIC_SUPABASE_URL dan NEXT_PUBLIC_SUPABASE_ANON_KEY harus ada di .env.local'
+    'ERROR: Tambahkan SUPABASE_SERVICE_ROLE_KEY (direkomendasikan) atau\n' +
+    '  NEXT_PUBLIC_SUPABASE_ANON_KEY ke .env.local sebelum menjalankan impor.'
   )
   process.exit(1)
 }
